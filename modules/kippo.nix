@@ -21,7 +21,8 @@ let
     ${optionalString (cfg.bannerFile != null) "banner_file = ${cfg.bannerFile}"}
     public_key = ${cfg.stateDir}/public.key
     private_key = ${cfg.stateDir}/private.key
-    
+    download_limit_size = ${toString cfg.downloadLimitSize}
+
     ${cfg.extraConfig}
   '';
 
@@ -67,8 +68,15 @@ in
       description = "Directory where to write log files.";
     };
 
+    userdb = mkOption {
+      default = null;
+      type = types.nullOr types.path;
+      description = "The password database. It not provided, the one distributed with kippo will be used.";
+      apply = path: if path == null then "${config.pkgs.kippo}/data/userdb.txt" else path;
+    };
+
     downloadLimitSize = mkOption {
-      default = 1000000;
+      default = 10485760;
       type = types.int;
       description = ''
         Maximum file size in bytes for downloaded files. A value of 0 means no limit.
@@ -129,7 +137,7 @@ in
         mkdir -m 0700 -p ${cfg.logDir}/tty ${cfg.stateDir} ${cfg.stateDir}/dl ${cfg.stateDir}/data /run/kippo
 
         if [ ! -f ${cfg.stateDir}/data/userdb.txt ]; then
-          cp -v ${kippo}/data/userdb.txt ${cfg.stateDir}/data/userdb.txt
+          cp -v ${cfg.userdb} ${cfg.stateDir}/data/userdb.txt
         fi
         
         if [ ! -f ${cfg.stateDir}/fs.pickle ]; then
