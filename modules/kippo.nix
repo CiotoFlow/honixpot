@@ -30,7 +30,7 @@ in
 
 {
 
-  options.honeypots.kippo = {
+  options.honeypots.kippo = with config.pkgs; {
     
     enable = mkOption {
       default = false;
@@ -73,6 +73,13 @@ in
       type = types.nullOr types.path;
       description = "The password database. It not provided, the one distributed with kippo will be used.";
       apply = path: if path == null then "${config.pkgs.kippo}/data/userdb.txt" else path;
+    };
+
+    fileSystem = mkOption {
+      default = null;
+      type = types.nullOr types.path;
+      description = "The fs.pickle file used by kippo for simulating the file system. If not provided, the one distributed with kippo will be used.";
+      apply = path: if path == null then "${config.pkgs.kippo}/fs.pickle" else path;
     };
 
     downloadLimitSize = mkOption {
@@ -141,7 +148,7 @@ in
         fi
         
         if [ ! -f ${cfg.stateDir}/fs.pickle ]; then
-          cp -v ${kippo}/fs.pickle ${cfg.stateDir}/fs.pickle
+          cp -v ${cfg.fileSystem} ${cfg.stateDir}/fs.pickle
         fi
 
         if [ ! -d ${cfg.stateDir}/honeyfs ]; then
