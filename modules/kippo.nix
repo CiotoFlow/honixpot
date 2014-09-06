@@ -25,10 +25,6 @@ let
     ${cfg.extraConfig}
   '';
 
-  runsh = config.pkgs.writeScript "kippo-run" ''
-    ${kippo}/start.sh -l ${cfg.logDir}/twistd.log --pidfile /run/kippo/kippo.pid
-  '';
-
 in
 
 {
