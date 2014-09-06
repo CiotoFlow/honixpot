@@ -1,0 +1,23 @@
+--- kippo.tac.orig	2014-09-06 11:06:55.535782318 +0200
++++ kippo.tac	2014-09-06 11:07:25.757006125 +0200
+@@ -18,7 +18,8 @@
+     print 'ERROR: You must not run kippo as root!'
+     sys.exit(1)
+ 
+-if not os.path.exists('kippo.cfg'):
++kippocfg = os.getenv("KIPPO_CONFIG", "kippo.cfg")
++if not os.path.exists(kippocfg):
+     print 'ERROR: kippo.cfg is missing!'
+     sys.exit(1)
+ 
+--- kippo/core/config.py.orig	2014-09-06 11:08:17.586385920 +0200
++++ kippo/core/config.py	2014-09-06 11:07:49.118177918 +0200
+@@ -5,7 +5,7 @@
+ 
+ def config():
+     cfg = ConfigParser.ConfigParser()
+-    for f in ('kippo.cfg', '/etc/kippo/kippo.cfg', '/etc/kippo.cfg'):
++    for f in (os.getenv("KIPPO_CONFIG", 'kippo.cfg'), '/etc/kippo/kippo.cfg', '/etc/kippo.cfg'):
+         if os.path.exists(f):
+             cfg.read(f)
+             return cfg
