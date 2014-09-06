@@ -1,6 +1,6 @@
 {
   
-  networking.firewall.allowPing = true;
+  config.networking.firewall.allowPing = true;
 
   config.systemd.targets.honeypots = {
     wantedBy = [ "multi-user.target" ];
